@@ -1,18 +1,11 @@
 {
   "intern_members": [
     {
-      "id": "507f",
+      "id": "f765",
       "name": "Bibek Kumar Labh",
-      "address": "Shankhamool",
-      "dateOfBirth": "2024-02-18T18:15:00.000Z",
+      "address": "Shakhamool",
+      "dateOfBirth": "2024-02-01",
       "selectionStatus": true
-    },
-    {
-      "id": "c57e",
-      "name": "Bimal",
-      "address": "Gautam",
-      "dateOfBirth": "2024-02-07T18:15:00.000Z",
-      "selectionStatus": false
     }
   ]
 }

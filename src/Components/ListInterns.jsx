@@ -1,9 +1,11 @@
-// InternList.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
-const ListInterns = () => {
+const ListInterns = ({ onDelete }) => {
     const [interns, setInterns] = useState([]);
+
+
 
     useEffect(() => {
         const fetchInterns = async () => {
@@ -18,6 +20,15 @@ const ListInterns = () => {
         fetchInterns();
     }, []);
 
+    const deleteIntern = async (id) => {
+        try {
+            await axios.delete(`http://localhost:3001/intern_members/${id}`);
+            setInterns((prevInterns) => prevInterns.filter((intern) => intern.id !== id));
+        } catch (error) {
+            console.error('Error deleting intern:', error);
+        }
+    };
+
     return (
         <div>
             <h2>Intern Lists</h2>
@@ -28,6 +39,7 @@ const ListInterns = () => {
                         <th scope="col">Address</th>
                         <th scope="col">Date of Birth</th>
                         <th scope="col">Selection Status</th>
+                        <th scope="col">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -42,6 +54,12 @@ const ListInterns = () => {
                                 ) : (
                                     <h6><span className="text-white bg-warning border rounded p-1">Not Selected</span></h6>
                                 )}
+                            </td>
+                            <td>
+                                <Link to={`/edit/${intern.id}`}>Edit</Link>
+                            </td>
+                            <td>
+                                <button onClick={() => deleteIntern(intern.id)}>Delete</button>
                             </td>
                         </tr>
                     ))}
