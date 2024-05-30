@@ -21,6 +21,8 @@ jobs:
           pnpm install
 
       - name: Authenticate and Run GitHub Copilot
+        env:
+          GH_TOKEN: ${{ secrets.BIBEK_GITHUB_TOKEN }}         
         run: |
             gh extension install github/gh-copilot
             gh auth login --web -h github.com
