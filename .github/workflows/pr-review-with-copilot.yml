@@ -31,10 +31,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.BIBEK_GITHUB_TOKEN }}
         run: |
+          echo "FILES=()" >> $GITHUB_ENV
           gh pr view ${{ github.event.pull_request.number }} --json files --jq '.files[].filename' | while read file; do
             content=$(cat $file)
-            suggestion=$(echo "$content" | gh copilot suggest --json | jq -r '.[].text')
-            echo "::set-output name=${file//\//_}::$suggestion"
+            suggestion=$(echo "$content" | gh copilot suggest)
+            echo "${file//\//_}<<EOF" >> $GITHUB_ENV
+            echo "$suggestion" >> $GITHUB_ENV
+            echo "EOF" >> $GITHUB_ENV
           done
 
       - name: Create review comment for each file
@@ -42,9 +45,9 @@ jobs:
         with:
           github-token: ${{ secrets.BIBEK_GITHUB_TOKEN }}
           script: |
-            const outputs = Object.entries(process.env).filter(([key, _]) => key.startsWith('OUTPUT_'));
+            const outputs = Object.entries(process.env).filter(([key, _]) => key.includes('EOF'));
             for (const [key, value] of outputs) {
-              const filePath = key.slice(7).replace(/_/g, '/');
+              const filePath = key.slice(0, -3).replace(/_/g, '/');
               const body = `Review suggestions for \`${filePath}\`:\n\`\`\`\n${value}\n\`\`\``;
               await github.pulls.createReview({
                 owner: context.repo.owner,
@@ -53,4 +56,5 @@ jobs:
                 body: body,
                 event: 'COMMENT'
               });
+            }
             }
