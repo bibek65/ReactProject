@@ -26,6 +26,7 @@ jobs:
         run: |
             gh extension install github/gh-copilot
             export GITHUB_TOKEN=${{ secrets.BIBEK_GITHUB_TOKEN }}
+            gh auth login --web -h github.com
             echo "FILES=()" >> $GITHUB_ENV
             gh pr view ${{ github.event.pull_request.number }} --json files --jq '.files[].filename' | while read file; do
                 content=$(cat $file)
