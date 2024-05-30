@@ -20,15 +20,15 @@ jobs:
           npm install -g pnpm
           pnpm install
 
+      - name: Install GitHub Copilot
+        run: |
+          gh extension install github/gh-copilot
+
       - name: Authenticate GitHub CLI
         env:
           GITHUB_TOKEN: ${{ secrets.BIBEK_GITHUB_TOKEN }}
         run: |
           echo $GITHUB_TOKEN | gh auth login --with-token
-
-      - name: Install GitHub Copilot
-        run: |
-          gh extension install github/gh-copilot
 
       - name: Get PR Files and Run Copilot
         env:
