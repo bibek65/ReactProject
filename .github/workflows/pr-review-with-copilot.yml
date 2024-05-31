@@ -1,4 +1,5 @@
 name: Automatic PR Review
+
 on:
   pull_request:
     types: [opened, synchronize, reopened]
@@ -22,34 +23,29 @@ jobs:
 
       - name: Authenticate and Run GitHub Copilot
         env:
-          GH_TOKEN: ${{ secrets.BIBEK_GITHUB_TOKEN }}         
+          GITHUB_TOKEN: ${{ secrets.BIBEK_GITHUB_TOKEN }}
         run: |
-            gh extension install github/gh-copilot
-            gh auth login --web -h github.com
-            echo "FILES=()" >> $GITHUB_ENV
-            gh pr view ${{ github.event.pull_request.number }} --json files --jq '.files[].filename' | while read file; do
-                content=$(cat $file)
-                suggestion=$(echo "$content" | gh copilot suggest)
-                echo "${file//\//_}<<EOF" >> $GITHUB_ENV
-                echo "$suggestion" >> $GITHUB_ENV
-                echo "EOF" >> $GITHUB_ENV
-            done
+          gh extension install github/gh-copilot
+          export GITHUB_TOKEN=${{ secrets.BIBEK_GITHUB_TOKEN }}
+          echo "COPILOT_ANALYSIS_RESULT=$(gh copilot explain "install git")" >> $GITHUB_ENV
 
-      - name: Create review comment for each file
+      - name: Create review comment
         uses: actions/github-script@v4
         with:
           github-token: ${{ secrets.BIBEK_GITHUB_TOKEN }}
           script: |
-            const outputs = Object.entries(process.env).filter(([key, _]) => key.includes('EOF'));
-            for (const [key, value] of outputs) {
-              const filePath = key.slice(0, -3).replace(/_/g, '/');
-              const body = `Review suggestions for \`${filePath}\`:\n\`\`\`\n${value}\n\`\`\``;
-              await github.pulls.createReview({
+            try {
+              const { data } = await github.pulls.createReview({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 pull_number: context.issue.number,
-                body: body,
+                body: 'Here are the automatic review comments:\n' + process.env.COPILOT_ANALYSIS_RESULT,
                 event: 'COMMENT'
               });
+              console.log(data);
+            } catch (error) {
+              console.error('Failed to create review comment:', error);
             }
-            }
+  
+            
+            
