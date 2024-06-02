@@ -21,7 +21,8 @@ jobs:
           yarn
       - name: Authenticate and Run GitHub Copilot
         run: |
-          echo "COPILOT_ANALYSIS_RESULT=$(gh copilot explain "install git")" >> $GITHUB_ENV
+          echo "COPILOT_ANALYSIS_RESULT=$(gh copilot explain "install git")"
+          echo $COPILOT_ANALYSIS_RESULT
         
 
       - name: Create review comment
