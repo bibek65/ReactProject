@@ -20,13 +20,15 @@ jobs:
         run: |
           yarn
       - name: Authenticate and Run GitHub Copilot
-        env:
-          GITHUB_TOKEN: ${{ secrets.BIBEK_GITHUB_TOKEN }}
         run: |
           gh extension install github/gh-copilot
           gh auth login --with-token $GITHUB_TOKEN
-          export GITHUB_TOKEN=${{ secrets.BIBEK_GITHUB_TOKEN }}
-          echo "COPILOT_ANALYSIS_RESULT=$(gh copilot explain "install git")" >> $GITHUB_ENV
+          export GITHUB_TOKEN=$GITHUB_TOKEN
+          COPILOT_ANALYSIS_RESULT=$(gh copilot explain "install git")
+          echo "COPILOT_ANALYSIS_RESULT=$COPILOT_ANALYSIS_RESULT" >> $GITHUB_ENV
+        shell: /usr/bin/bash -e {0}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create review comment
         uses: actions/github-script@v4
