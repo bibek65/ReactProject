@@ -24,7 +24,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.BIBEK_GITHUB_TOKEN }}
         run: |
           gh extension install github/gh-copilot
-
+          gh auth login --web -h github.com
           export GITHUB_TOKEN=${{ secrets.BIBEK_GITHUB_TOKEN }}
           echo "COPILOT_ANALYSIS_RESULT=$(gh copilot explain "install git")" >> $GITHUB_ENV
 
