@@ -22,6 +22,7 @@ jobs:
       - name: Authenticate and Run GitHub Copilot
         run: |
           gh extension install github/gh-copilot
+          echo $GITHUB_TOKEN
           gh auth login --with-token $GITHUB_TOKEN
           echo "Login sucess"
         #   export GITHUB_TOKEN=$GITHUB_TOKEN
